@@ -1,7 +1,7 @@
 
-const User = require('../model/users')
-
-
+const User = require('../model/users.js')
+const bcrypt = require("bcrypt")
+const token = require("jsonwebtoken")
 
 
 const registerUser = async (req, res) => {
@@ -9,65 +9,55 @@ const registerUser = async (req, res) => {
         const { username, email, password } = req.body
         let existinguser = await User.findOne({ email });
         if (existinguser) {
-            res.status(490).json({
+            return res.status(200).send({
                 success: false,
                 message: "user already exist"
             })
         }
 
-        const user = await User.create({ username, email, password })
+    
+        const hashpassword = await bcrypt.hash(password, 10)
+        const user = await User.create({ username, email, password: hashpassword })
 
-        res.status(201).json({
+        return res.status(201).send({
             success: true,
             message: "user created successfull",
             user
         })
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).send({
             success: false,
             message: error.message,
         })
     }
 };
 
-
-
-const loginUser = async(req,res) =>{
+const login = async (req, res) => {
     try {
-        const {email,password} = req.body;
-
-        const getuser = await User.findOne({email, password});
-
-        if (!getuser) {
-            res.status(400).json({
-                success:false,
-                message:"user does not exist",
-                
-            })
-        };
-
-       const matchpassword = User.isPasswordCorrect(password,this.password)
-
-        if(!matchpassword){
-            res.status(404).json({
-                success:false,
-                message:"Incorrect password"
-            })
-        };
-
-        res.status(201).json({
-            message:"login succesfull",
-            success:true,
-            getuser
-        })
-        
+      const user = await User.findOne({ email: req.body.email });
+      if (!user) {
+        return res
+          .status(200)
+          .send({ message: "user not found", success: false });
+      }
+      const isMatch = await bcrypt.compare(req.body.password, user.password);
+      if (!isMatch) {
+        return res
+          .status(200)
+          .send({ message: "Invlid EMail or Password", success: false });
+      }
+     
+      res.status(200).send({ message: "Login Success", success: true, });
     } catch (error) {
-        console.log(error)
-       
+      console.log(error);
+      res.status(500).send({ message: `Error in Login CTRL ${error.message}` });
     }
-}
+  };
+
+
 
 module.exports = {
     registerUser,
-    loginUser
+    login
+    
 } 
