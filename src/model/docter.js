@@ -11,6 +11,7 @@ const docterschema = new mongoose.Schema({
     email:{
         type:String,
         required:true,
+        unique:true
     },
     password:{
         type:String,
@@ -18,12 +19,13 @@ const docterschema = new mongoose.Schema({
     },
     role:{
         type:String,
-        default :"doctor",
+        default :"docter",
         
     },
-    profileClaimed: {
-        type: Boolean,
-        default: false
+    phonenumber:{
+        type:Number,
+        default: 10,
+        required:true
     },
     qualifications: {
         type: String,
@@ -34,24 +36,12 @@ const docterschema = new mongoose.Schema({
         required: true
     },
     experience: {
-        overall: {
-            type: String,
-            required: true
-        },
-        asSpecialist: {
-            type: String,
-            required: true
-        }
-    },
-    registrations: {
-        medical: {
-            type: String,
-            required: true
-        },
+        type:String,
+        required:true
     },
     ratings: {
         type: Number,
-        required: true
+    
     },
     description: {
         type: String,
@@ -62,10 +52,27 @@ const docterschema = new mongoose.Schema({
         ref:"Appointment"
     },
     status:{
-        type:Boolean,
+        type:String,
         default:"pending"
     }
+
+
+
+
 });
+
+docterschema.pre("save", async function(next){
+    if(this.isModified("password")) next()
+
+    this.password = await bcrypt.hash(this.password,10)
+    next()
+})
+docterschema.methods.isPasswordCorrect = async function(password){
+    return await bcrypt.compare(password,this.password)
+}
+docterschema.methods.generatetoken = async function(){
+    return jwt.sign({_id: this.id},process.env.JWT_SECRET)
+}
 
 
 

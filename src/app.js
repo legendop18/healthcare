@@ -13,10 +13,13 @@ app.use(express.static("public"))
 // routes import 
 
 const userRouter = require('./routes/users.routes.js')
-
+const docterroute = require("./routes/docter.routes.js")
 //routes declartion
 
-app.use("/api/v1/users", userRouter)
+app.use("/users", userRouter),
+app.use("/docter", docterroute)
+
+
 
 
 

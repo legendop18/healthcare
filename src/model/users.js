@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-
+const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
 const userschema = new mongoose.Schema({
     username: {
@@ -21,7 +22,7 @@ const userschema = new mongoose.Schema({
 
     },
     avatar: {
-        tyep: String,
+        type: String,
     },
     dob: {
         type: Date,
@@ -30,7 +31,7 @@ const userschema = new mongoose.Schema({
     bloodgroup: {
         type: String,
         enum: ['A+', 'B+', 'A-', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-        required: true
+        
     },
     gender: {
         type: String,
@@ -43,8 +44,9 @@ const userschema = new mongoose.Schema({
             city: String,
             state: String,
             zip: String,
-            required: true
+            
         },
+        
     ],
     phonenumber: {
         type: Number,
@@ -69,6 +71,18 @@ const userschema = new mongoose.Schema({
 
 })
 
+userschema.pre("save", async function(next){
+    if(this.isModified("password")) next()
+
+    this.password = await bcrypt.hash(this.password,10)
+    next()
+})
+userschema.methods.isPasswordCorrect = async function(password){
+    return await bcrypt.compare(password,this.password)
+}
+userschema.methods.generatetoken = async function(){
+    return jwt.sign({_id: this.id},process.env.JWT_SECRET)
+}
 
 const User = mongoose.model("User", userschema)
 module.exports = User
