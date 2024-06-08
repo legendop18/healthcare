@@ -97,18 +97,46 @@ const logindocter = async(req,res)=>{
 
 const getalldocter = async(req,res)=>{
     try {
-        
-    } catch (error) {
-        
+        const docter = await Docter.find();
+        if(!docter) return res.status(404).json({
+            success:false,
+            message:"docter not found",
+        })
+        return res.status(201).json(docter)
+    } 
+    catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
     }
 };
 
 const finddoctor = async(req,res)=>{
+    try {
+        const { username ,specialties} = req.query
+        const query = {}
 
+        if(!username){
+            query.username
+        }
+        if(!specialties){
+            query.specialties
+        }
+        const docter = await Docter.find(query)
+        return res.status(201).json(docter)
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
 };
 
 const updatedoctorprofile =async (req,res)=>{
     
+
 };
 const getdocterbyid = async(req,res)=>{
 
@@ -120,5 +148,7 @@ const deletedocter = async(req,res)=>{
 
 module.exports = {
     registerdoctor,
-    logindocter
+    logindocter,
+    getalldocter,
+    finddoctor
 }
