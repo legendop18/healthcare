@@ -4,7 +4,7 @@ const User = require("../model/users")
 
 
 
-const isAuthencated = (req,res,next) =>{
+const isAuthencated = async (req,res,next) =>{
     const token = req.cookies["token"]
 
     if(!token) {
@@ -13,10 +13,8 @@ const isAuthencated = (req,res,next) =>{
 
 
     const decoded = jwt.verify("token",process.env.JWT_SECRET)
-     
-    req.User = decoded
-
-   
+    req.User= decoded
+    
     next()
 }
 

@@ -1,5 +1,5 @@
 const User = require("../model/users.js")
-const Doctor = require("../controllers/doctor.controllers.js")
+const Docter = require("../model/docter.js");
 
 
 
@@ -33,6 +33,7 @@ const register = async(req,res)=>{
         bloodgroup
     });
      
+    await user.save()
     return res.status(200).json({
         success:true,
         message:"User created successfully",
@@ -59,8 +60,8 @@ const login = async(req,res)=>{
     let existingUser;
     if (role === 'user') {
     existingUser = await User.findOne({ email });
-    } else if (role === 'doctor') {
-    existingUser = await Doctor.findOne({ email });
+    } else if (role === 'docter') {
+    existingUser = await Docter.findOne({email});
     } else {
     return res.status(400).json({ error: 'Invalid user type' });
     }
@@ -86,7 +87,7 @@ const login = async(req,res)=>{
 
     return res.status(201).cookie("token",token).json({
         success:true,
-        message:"User login successfully"
+        message:"login successfully"
     })
 
     } catch (error) {
