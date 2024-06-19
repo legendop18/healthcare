@@ -47,6 +47,7 @@ const register = async(req,res)=>{
    };
    
 };
+
 const login = async(req,res)=>{
     try {
         const {email,password,role} = req.body
@@ -58,6 +59,7 @@ const login = async(req,res)=>{
 })
 
     let existingUser;
+    
     if (role === 'user') {
     existingUser = await User.findOne({ email });
     } else if (role === 'docter') {

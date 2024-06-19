@@ -1,25 +1,26 @@
-const jwt = require("jsonwebtoken")
-const User = require("../model/users")
+const jwt = require("jsonwebtoken");
+const User = require("../model/users");
 
+const isAuthencated = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
 
+    if (!token) {
+      return res
+        .status(403)
+        .send({ auth: false, message: "No token provided." });
+    }
 
+    const decoded = await jwt.verify(token,process.env.JWT_SECRET);
 
-const isAuthencated = async (req,res,next) =>{
-    const token = req.cookies["token"]
+    if (!decoded) {
+      console.log("token invalid");
+    }
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
-    if(!token) {
-        return res.status(404).json("please login ")
-    };
-
-
-    const decoded = jwt.verify("token",process.env.JWT_SECRET)
-    req.User= decoded
-    
-    next()
-}
-
-
-
-
-
-module.exports = {isAuthencated}
+module.exports = { isAuthencated };
