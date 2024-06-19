@@ -81,7 +81,7 @@ userschema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password,this.password)
 }
 userschema.methods.generatetoken = async function(){
-    return jwt.sign({_id: this.id},process.env.JWT_SECRET)
+    return jwt.sign({_id: this.id},process.env.JWT_SECRET,{expiresIn:"10d"})
 }
 
 const User = mongoose.model("User", userschema)

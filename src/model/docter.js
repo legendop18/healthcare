@@ -72,7 +72,7 @@ docterschema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password,this.password)
 }
 docterschema.methods.generatetoken = async function(){
-    return jwt.sign({_id: this.id},process.env.JWT_SECRET)
+    return jwt.sign({id: this.id,email : this.email},process.env.JWT_SECRET)
 }
 
 

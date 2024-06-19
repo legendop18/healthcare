@@ -1,12 +1,15 @@
 const dotenv = require('dotenv')
 const express = require('express')
 const app = express()
+const cookieParser = require('cookie-parser')
 dotenv.config()
 
 
 app.use(express.json({limit:"32kb"}))
 app.use(express.urlencoded({extended :true}))
 app.use(express.static("public"))
+app.use(cookieParser())
+
 
 
 

@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const Docter = require("../model/docter.js");
 
 const registerdoctor = async (req, res) => {
@@ -33,6 +34,8 @@ const registerdoctor = async (req, res) => {
       experience,
 
     });
+
+
 
     await doctor.save();
 
@@ -96,7 +99,8 @@ const finddoctor = async (req, res) => {
 
 const updatedoctorprofile = async (req, res) => {
   try {
-    const profileid = req.docter.id;
+    const profileid = req.user.id
+    
     const { username,email,password,qualifications,specialties,description,phonenumber, experience,
     } = req.body;
   
@@ -109,6 +113,8 @@ const updatedoctorprofile = async (req, res) => {
     if(description) updatefield.description = description
     if(phonenumber) updatefield.phonenumber = phonenumber
     if(experience) updatefield.experience = experience
+
+    console.log(profileid);
   
     const docter = await Docter.findByIdAndUpdate(profileid,updatefield , { new :true});
   
